@@ -47,7 +47,6 @@ import org.apache.flink.metrics.MeterView;
 import org.apache.flink.streaming.api.functions.co.KeyedBroadcastProcessFunction;
 import org.apache.flink.util.Collector;
 
-// TODO: For a more generic implementation consider using a composite key instead of String
 @Slf4j
 public class DynamicRuleFunction
     extends KeyedBroadcastProcessFunction<
@@ -199,13 +198,11 @@ public class DynamicRuleFunction
   }
 
   private boolean noRuleAvailable(Rule rule) {
-    // This happens if the BroadcastState in this CoProcessFunction was updated before it was
-    // updated in `DynamicKeyFunction`
-    // TODO Maybe we should consider sending the whole Rule Object with each event to avoid this
-    // race condition.
+    // This could happen if the BroadcastState in this CoProcessFunction was updated after it was
+    // updated and used in `DynamicKeyFunction`
     if (rule == null) {
       log.info(
-          "Rule for ID {} was not found. Ignoring rule for this transaction. This should only happen close to an update to a rule.");
+          "Rule for ID {} was not found. Ignoring rule for this transaction. This should only happen close to an update of a rule.");
       return true;
     }
     return false;
