@@ -116,9 +116,11 @@ public class RulesEvaluator {
         .name("Alerts JSON Sink");
     currentRulesJson.addSink(CurrentRulesSink.createRulesSink(config)).setParallelism(1);
 
-    // TODO: add DoubleSerializationSchema and switch sink type
     DataStream<String> latencies =
-        latency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate());
+        latency
+            .timeWindowAll(Time.seconds(10))
+            .aggregate(new AverageAggregate())
+            .map(String::valueOf);
     latencies.addSink(LatencySink.createLatencySink(config));
 
     env.execute("Fraud Detection Engine");
