@@ -85,15 +85,15 @@ public class DynamicRuleFunction
 
     addToStateValuesSet(windowState, currentEventTime, value.getWrapped());
 
-    Rule rule = ctx.getBroadcastState(Descriptors.rulesDescriptor).get(value.getId());
-    if (rule == null) {
-      log.error("Rule with {} does not exist", value.getId());
-    }
-
     long ingestionTime = value.getWrapped().getIngestionTimestamp();
     ctx.output(Descriptors.latencySinkTag, System.currentTimeMillis() - ingestionTime);
 
-    if (noRuleAvailable(rule)) return;
+    Rule rule = ctx.getBroadcastState(Descriptors.rulesDescriptor).get(value.getId());
+
+    if (noRuleAvailable(rule)) {
+      log.error("Rule with ID {} does not exist", value.getId());
+      return;
+    }
 
     if (rule.getRuleState() == Rule.RuleState.ACTIVE) {
       Long windowStartForEvent = rule.getWindowStartFor(currentEventTime);
@@ -201,8 +201,6 @@ public class DynamicRuleFunction
     // This could happen if the BroadcastState in this CoProcessFunction was updated after it was
     // updated and used in `DynamicKeyFunction`
     if (rule == null) {
-      log.info(
-          "Rule for ID {} was not found. Ignoring rule for this transaction. This should only happen close to an update of a rule.");
       return true;
     }
     return false;
