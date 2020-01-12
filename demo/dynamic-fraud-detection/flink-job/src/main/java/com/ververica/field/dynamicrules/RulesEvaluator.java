@@ -86,10 +86,12 @@ public class RulesEvaluator {
         transactions
             .connect(keysStream)
             .process(new DynamicKeyFunction())
+            .uid("DynamicKeyFunction")
             .name("Dynamic Partitioning Function")
             .keyBy((keyed) -> keyed.getKey())
             .connect(rulesStream)
             .process(new DynamicRuleFunction())
+            .uid("DynamicRuleFunction")
             .name("Dynamic Rule Evaluation Function");
 
     DataStream<String> allRuleEvaluations =
