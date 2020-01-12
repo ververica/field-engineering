@@ -122,7 +122,7 @@ public class RulesEvaluator {
         latency.timeWindowAll(Time.seconds(10)).aggregate(new AverageAggregate());
     latencies.addSink(LatencySink.createLatencySink(config));
 
-    env.execute();
+    env.execute("Fraud Detection Engine");
   }
 
   private DataStream<Transaction> getTransactionsStream(StreamExecutionEnvironment env) {
@@ -156,7 +156,6 @@ public class RulesEvaluator {
 
   private StreamExecutionEnvironment configureStreamExecutionEnvironment(
       RulesSource.Type rulesSourceEnumType, boolean isLocal) {
-    //    StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
     Configuration flinkConfig = new Configuration();
     flinkConfig.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true);
 

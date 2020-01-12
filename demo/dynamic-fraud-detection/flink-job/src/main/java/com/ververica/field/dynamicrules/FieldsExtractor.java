@@ -42,6 +42,7 @@ public class FieldsExtractor {
     return new BigDecimal(field.get(object).toString());
   }
 
+  @SuppressWarnings("unchecked")
   public static <T> T getByKeyAs(String keyName, Object object)
       throws NoSuchFieldException, IllegalAccessException {
     Field field = object.getClass().getField(keyName);

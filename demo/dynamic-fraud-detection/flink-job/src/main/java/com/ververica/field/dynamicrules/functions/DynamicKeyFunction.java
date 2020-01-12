@@ -42,12 +42,12 @@ import org.apache.flink.util.Collector;
 public class DynamicKeyFunction
     extends BroadcastProcessFunction<Transaction, Rule, Keyed<Transaction, String, Integer>> {
 
-  private RuleCounterGuage ruleCounterGuage;
+  private RuleCounterGauge ruleCounterGauge;
 
   @Override
   public void open(Configuration parameters) {
-    ruleCounterGuage = new RuleCounterGuage();
-    getRuntimeContext().getMetricGroup().gauge("numberOfActiveRules", ruleCounterGuage);
+    ruleCounterGauge = new RuleCounterGauge();
+    getRuntimeContext().getMetricGroup().gauge("numberOfActiveRules", ruleCounterGauge);
   }
 
   @Override
@@ -72,7 +72,7 @@ public class DynamicKeyFunction
               event, KeysExtractor.getKey(rule.getGroupingKeyNames(), event), rule.getRuleId()));
       ruleCounter++;
     }
-    ruleCounterGuage.setValue(ruleCounter);
+    ruleCounterGauge.setValue(ruleCounter);
   }
 
   @Override
@@ -101,7 +101,7 @@ public class DynamicKeyFunction
     }
   }
 
-  private static class RuleCounterGuage implements Gauge<Integer> {
+  private static class RuleCounterGauge implements Gauge<Integer> {
 
     private int value = 0;
 
