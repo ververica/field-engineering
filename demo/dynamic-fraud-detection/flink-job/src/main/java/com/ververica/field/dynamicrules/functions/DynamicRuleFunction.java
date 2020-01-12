@@ -212,7 +212,7 @@ public class DynamicRuleFunction
       throws Exception {
     Rule widestWindowRule = broadcastState.get(WIDEST_RULE_KEY);
     if (widestWindowRule != null && widestWindowRule.getRuleState() == Rule.RuleState.ACTIVE) {
-      if (widestWindowRule == null || widestWindowRule.getWindowMillis() < rule.getWindowMillis()) {
+      if (widestWindowRule.getWindowMillis() < rule.getWindowMillis()) {
         broadcastState.put(WIDEST_RULE_KEY, rule);
       }
     }
