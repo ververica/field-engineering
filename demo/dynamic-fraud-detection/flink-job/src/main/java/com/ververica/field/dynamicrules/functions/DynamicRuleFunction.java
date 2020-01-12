@@ -56,8 +56,8 @@ public class DynamicRuleFunction
   private static final String COUNT = "COUNT_FLINK";
   private static final String COUNT_WITH_RESET = "COUNT_WITH_RESET_FLINK";
 
-  public final int WIDEST_RULE_KEY = Integer.MIN_VALUE;
-  public final int CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
+  private static int WIDEST_RULE_KEY = Integer.MIN_VALUE;
+  private static int CLEAR_STATE_COMMAND_KEY = Integer.MIN_VALUE + 1;
 
   private transient MapState<Long, Set<Transaction>> windowState;
   private Meter alertMeter;
