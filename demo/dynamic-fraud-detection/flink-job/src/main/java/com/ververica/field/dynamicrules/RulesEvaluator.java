@@ -48,7 +48,6 @@ import org.apache.flink.streaming.api.datastream.BroadcastStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.functions.AssignerWithPeriodicWatermarks;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.time.Time;
@@ -136,7 +135,7 @@ public class RulesEvaluator {
     DataStream<Transaction> transactionsStream =
         TransactionsSource.stringsStreamToTransactions(transactionsStringsStream);
     return transactionsStream.assignTimestampsAndWatermarks(
-        createBoundedOutOfOrdernessTimestampExtractor(config.get(OUT_OF_ORDERNESS)));
+        new SimpleBoundedOutOfOrdernessTimestampExtractor<>(config.get(OUT_OF_ORDERNESS)));
   }
 
   private DataStream<Rule> getRulesUpdateStream(StreamExecutionEnvironment env) throws IOException {
@@ -173,15 +172,17 @@ public class RulesEvaluator {
     return env;
   }
 
-  private AssignerWithPeriodicWatermarks<Transaction> createBoundedOutOfOrdernessTimestampExtractor(
-      int outOfOrderness) {
-    return new BoundedOutOfOrdernessTimestampExtractor<Transaction>(
-        Time.of(outOfOrderness, TimeUnit.MILLISECONDS)) {
-      @Override
-      public long extractTimestamp(Transaction element) {
-        return element.getEventTime();
-      }
-    };
+  private static class SimpleBoundedOutOfOrdernessTimestampExtractor<T extends Transaction>
+      extends BoundedOutOfOrdernessTimestampExtractor<T> {
+
+    public SimpleBoundedOutOfOrdernessTimestampExtractor(int outOfOrderdnessMillis) {
+      super(Time.of(outOfOrderdnessMillis, TimeUnit.MILLISECONDS));
+    }
+
+    @Override
+    public long extractTimestamp(T element) {
+      return element.getEventTime();
+    }
   }
 
   private void configureRestartStrategy(
