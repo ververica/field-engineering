@@ -47,6 +47,9 @@ import org.apache.flink.metrics.MeterView;
 import org.apache.flink.streaming.api.functions.co.KeyedBroadcastProcessFunction;
 import org.apache.flink.util.Collector;
 
+/**
+ * Implements main rule evaluation and alerting logic.
+ */
 @Slf4j
 public class DynamicRuleFunction
     extends KeyedBroadcastProcessFunction<
@@ -156,7 +159,6 @@ public class DynamicRuleFunction
         }
         break;
       case CLEAR_STATE_ALL:
-        //        rulesState.put(CLEAR_STATE_COMMAND_KEY, command);
         ctx.applyToKeyedState(windowStateDescriptor, (key, state) -> state.clear());
         break;
       case CLEAR_STATE_ALL_STOP:
@@ -191,7 +193,7 @@ public class DynamicRuleFunction
         BigDecimal aggregatedValue =
             FieldsExtractor.getBigDecimalByName(
                 rule.getAggregateFieldName(),
-                event); // Should be double or BigDecimal in the first place
+                event);
         aggregator.add(aggregatedValue);
       }
     }
@@ -216,6 +218,7 @@ public class DynamicRuleFunction
     }
   }
 
+  @Override
   public void onTimer(final long timestamp, final OnTimerContext ctx, final Collector<Alert> out)
       throws Exception {
 
@@ -226,8 +229,6 @@ public class DynamicRuleFunction
     Optional<Long> cleanupEventTimeThreshold =
         cleanupEventTimeWindow.map(window -> timestamp - window);
 
-    // TODO: add maximum allowed widest window instead (force cleanup, even if widest rule is
-    // inactive)?
     cleanupEventTimeThreshold.ifPresent(this::evictAgedElementsFromWindow);
   }
 

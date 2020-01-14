@@ -41,7 +41,6 @@ import org.junit.Test;
 public class RulesEvaluatorTest {
 
   @Test
-  // TODO: Key by multiple
   public void shouldProduceKeyedOutput() throws Exception {
     RuleParser ruleParser = new RuleParser();
     Rule rule1 =

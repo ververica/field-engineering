@@ -38,6 +38,9 @@ import org.apache.flink.metrics.Gauge;
 import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
 import org.apache.flink.util.Collector;
 
+/**
+ * Implements dynamic data partitioning based on a set of broadcasted rules.
+ */
 @Slf4j
 public class DynamicKeyFunction
     extends BroadcastProcessFunction<Transaction, Rule, Keyed<Transaction, String, Integer>> {
@@ -50,6 +53,14 @@ public class DynamicKeyFunction
     getRuntimeContext().getMetricGroup().gauge("numberOfActiveRules", ruleCounterGauge);
   }
 
+  /**
+   * Processes one @see {com.ververica.field.dynamicrules.Transaction} at-a-time and
+   *
+   * @param event incoming Transaction records
+   * @param ctx Flink context
+   * @param out
+   * @throws Exception
+   */
   @Override
   public void processElement(
       Transaction event, ReadOnlyContext ctx, Collector<Keyed<Transaction, String, Integer>> out)
@@ -59,6 +70,13 @@ public class DynamicKeyFunction
     forkEventForEachGroupingKey(event, rulesState, out);
   }
 
+  /**
+   *
+   * @param event
+   * @param rulesState
+   * @param out
+   * @throws Exception
+   */
   private void forkEventForEachGroupingKey(
       Transaction event,
       ReadOnlyBroadcastState<Integer, Rule> rulesState,

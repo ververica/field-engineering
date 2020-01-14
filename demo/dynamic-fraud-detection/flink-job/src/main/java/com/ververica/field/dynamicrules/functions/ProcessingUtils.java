@@ -34,8 +34,6 @@ class ProcessingUtils {
         broadcastState.put(rule.getRuleId(), rule);
         break;
       case DELETE:
-        // TODO: add logic to find a new "widest window" in case associated rule of the current one
-        // gets removed
         broadcastState.remove(rule.getRuleId());
         break;
     }
