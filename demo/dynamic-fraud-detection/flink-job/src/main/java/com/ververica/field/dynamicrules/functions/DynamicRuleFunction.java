@@ -47,9 +47,7 @@ import org.apache.flink.metrics.MeterView;
 import org.apache.flink.streaming.api.functions.co.KeyedBroadcastProcessFunction;
 import org.apache.flink.util.Collector;
 
-/**
- * Implements main rule evaluation and alerting logic.
- */
+/** Implements main rule evaluation and alerting logic. */
 @Slf4j
 public class DynamicRuleFunction
     extends KeyedBroadcastProcessFunction<
@@ -191,9 +189,7 @@ public class DynamicRuleFunction
     } else {
       for (Transaction event : inWindow) {
         BigDecimal aggregatedValue =
-            FieldsExtractor.getBigDecimalByName(
-                rule.getAggregateFieldName(),
-                event);
+            FieldsExtractor.getBigDecimalByName(rule.getAggregateFieldName(), event);
         aggregator.add(aggregatedValue);
       }
     }

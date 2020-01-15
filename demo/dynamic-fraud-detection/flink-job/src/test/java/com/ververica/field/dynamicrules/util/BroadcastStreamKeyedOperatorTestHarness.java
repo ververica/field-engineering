@@ -19,6 +19,7 @@
 package com.ververica.field.dynamicrules.util;
 
 import java.util.Arrays;
+import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.api.common.state.BroadcastState;
 import org.apache.flink.api.common.state.MapStateDescriptor;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -65,8 +66,8 @@ public class BroadcastStreamKeyedOperatorTestHarness<K, IN1, IN2, OUT>
       throws Exception {
     super(operator, maxParallelism, numSubtasks, subtaskIndex);
 
-    ClosureCleaner.clean(keySelector1, false);
-    ClosureCleaner.clean(keySelector2, false);
+    ClosureCleaner.clean(keySelector1, ExecutionConfig.ClosureCleanerLevel.RECURSIVE, false);
+    ClosureCleaner.clean(keySelector2, ExecutionConfig.ClosureCleanerLevel.RECURSIVE, false);
     config.setStatePartitioner(0, keySelector1);
     config.setStatePartitioner(1, keySelector2);
     config.setStateKeySerializer(keyType.createSerializer(executionConfig));

@@ -38,9 +38,7 @@ import org.apache.flink.metrics.Gauge;
 import org.apache.flink.streaming.api.functions.co.BroadcastProcessFunction;
 import org.apache.flink.util.Collector;
 
-/**
- * Implements dynamic data partitioning based on a set of broadcasted rules.
- */
+/** Implements dynamic data partitioning based on a set of broadcasted rules. */
 @Slf4j
 public class DynamicKeyFunction
     extends BroadcastProcessFunction<Transaction, Rule, Keyed<Transaction, String, Integer>> {
@@ -71,7 +69,6 @@ public class DynamicKeyFunction
   }
 
   /**
-   *
    * @param event
    * @param rulesState
    * @param out

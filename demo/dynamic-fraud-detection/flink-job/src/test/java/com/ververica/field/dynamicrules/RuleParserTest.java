@@ -31,6 +31,7 @@ import org.junit.Test;
 
 public class RuleParserTest {
 
+  @SafeVarargs
   public static <T> List<T> lst(T... ts) {
     return Arrays.asList(ts);
   }
